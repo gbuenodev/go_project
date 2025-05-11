@@ -15,7 +15,7 @@ import (
 type App struct {
 	Logger         *log.Logger
 	WorkoutHandler *api.WorkoutHandler
-	DB             *sql.DB
+	DBConn         *sql.DB
 }
 
 func NewApp() (*App, error) {
@@ -30,26 +30,26 @@ func NewApp() (*App, error) {
 		SSL:      "disable",
 	}
 
-	DB, err := store.Open(&dbConfig)
+	DBConn, err := store.Open(&dbConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	err = store.MigrateFS(DB, migrations.FS, ".")
+	err = store.MigrateFS(DBConn, migrations.FS, ".")
 	if err != nil {
 		panic(err)
 	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	workoutStore := store.NewDBWorkoutStore(DB)
+	workoutStore := store.NewDBWorkoutStore(DBConn)
 
 	workoutHandler := api.NewWorkoutHandler(workoutStore)
 
 	app := &App{
 		Logger:         logger,
 		WorkoutHandler: workoutHandler,
-		DB:             DB,
+		DBConn:         DBConn,
 	}
 
 	return app, nil

@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	defer app.DB.Close()
+	defer app.DBConn.Close()
 
 	app.Logger.Printf("App is running on port %d\n", port)
 

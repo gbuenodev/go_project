@@ -23,11 +23,11 @@ type WorkoutEntry struct {
 }
 
 type DBWorkoutStore struct {
-	db *sql.DB
+	DBConn *sql.DB
 }
 
-func NewDBWorkoutStore(db *sql.DB) *DBWorkoutStore {
-	return &DBWorkoutStore{db: db}
+func NewDBWorkoutStore(DBConn *sql.DB) *DBWorkoutStore {
+	return &DBWorkoutStore{DBConn: DBConn}
 }
 
 type WorkoutStore interface {
@@ -35,8 +35,8 @@ type WorkoutStore interface {
 	GetWorkoutByID(id int64) (*Workout, error)
 }
 
-func (pg *DBWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error) {
-	tx, err := pg.db.Begin()
+func (db *DBWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error) {
+	tx, err := db.DBConn.Begin()
 	if err != nil {
 		return nil, err
 	}
