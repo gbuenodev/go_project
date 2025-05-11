@@ -22,12 +22,12 @@ type WorkoutEntry struct {
 	OrderIndex      int      `json:"order_index"`
 }
 
-type PostgresWorkoutStore struct {
+type DBWorkoutStore struct {
 	db *sql.DB
 }
 
-func NewPostgresWorkoutStore(db *sql.DB) *PostgresWorkoutStore {
-	return &PostgresWorkoutStore{db: db}
+func NewDBWorkoutStore(db *sql.DB) *DBWorkoutStore {
+	return &DBWorkoutStore{db: db}
 }
 
 type WorkoutStore interface {
@@ -35,7 +35,7 @@ type WorkoutStore interface {
 	GetWorkoutByID(id int64) (*Workout, error)
 }
 
-func (pg *PostgresWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error) {
+func (pg *DBWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error) {
 	tx, err := pg.db.Begin()
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (pg *PostgresWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error
 	return workout, nil
 }
 
-func (pg *PostgresWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
+func (pg *DBWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 	workout := &Workout{}
 	return workout, nil
 }

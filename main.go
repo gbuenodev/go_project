@@ -25,6 +25,7 @@ func main() {
 	app.Logger.Printf("App is running on port %d\n", port)
 
 	r := routes.Routes(app)
+
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
 		Handler:      r,

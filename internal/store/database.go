@@ -10,16 +10,54 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-func Open() (*sql.DB, error) {
-	db, err := sql.Open("pgx", "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable")
+type DBConfig struct {
+	Provider string
+	Driver   string
+	User     string
+	Password string
+	DBName   string
+	Host     string
+	Port     int
+	SSL      string
+}
+
+func Open(dbConfig *DBConfig) (*sql.DB, error) {
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
+		dbConfig.Host,
+		dbConfig.User,
+		dbConfig.Password,
+		dbConfig.DBName,
+		dbConfig.Port,
+		dbConfig.SSL,
+	)
+
+	db, err := sql.Open(dbConfig.Driver, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("db: open %w", err)
 	}
+
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
 	db.SetConnMaxIdleTime(time.Minute * 5)
-	db.Ping()
-	fmt.Println("Connected to Database...")
+
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("db: ping %w", err)
+	}
+
+	fmt.Printf(`----- Connected to Database -----
+Provider: %s
+Port: %d
+DB: %s
+User: %s
+---------------------------------
+`,
+		dbConfig.Provider,
+		dbConfig.Port,
+		dbConfig.DBName,
+		dbConfig.User,
+	)
 
 	return db, nil
 }
