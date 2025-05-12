@@ -36,6 +36,7 @@ type WorkoutStore interface {
 	CreateWorkout(*Workout) (*Workout, error)
 	GetWorkoutByID(id int64) (*Workout, error)
 	UpdateWorkout(*Workout) error
+	DeleteWorkoutByID(id int64) error
 }
 
 func (db *DBWorkoutStore) CreateWorkout(workout *Workout) (*Workout, error) {
@@ -183,6 +184,27 @@ func (db *DBWorkoutStore) UpdateWorkout(workout *Workout) error {
 	err = tx.Commit()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (db *DBWorkoutStore) DeleteWorkoutByID(id int64) error {
+	query := `
+	DELETE from workouts
+	WHERE id = $1
+	`
+
+	result, err := db.DBConn.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil
