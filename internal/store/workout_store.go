@@ -85,7 +85,7 @@ func (db *DBWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 	FROM workouts
 	WHERE id = $1
 	`
-	err := db.DBConn.QueryRow(query, workout.ID).Scan(&workout.ID, &workout.Title, &workout.Description, &workout.DurationMinutes, &workout.CaloriesBurned)
+	err := db.DBConn.QueryRow(query, id).Scan(&workout.ID, &workout.Title, &workout.Description, &workout.DurationMinutes, &workout.CaloriesBurned)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -93,7 +93,7 @@ func (db *DBWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 		return nil, err
 	}
 
-	// gets workout
+	// gets workout entries
 	entryQuery := `
 	SELECT id, exercise_name, sets, reps, duration_seconds, weight, notes, order_index
 	FROM workout_entries
@@ -137,7 +137,7 @@ func (db *DBWorkoutStore) UpdateWorkout(workout *Workout) error {
 
 	query := `
 	UPDATE workouts
-	SET title = %1, description = $2, duration_minutes = $3, calories_burned = $4
+	SET title = $1, description = $2, duration_minutes = $3, calories_burned = $4
 	WHERE id = $5
 	`
 
