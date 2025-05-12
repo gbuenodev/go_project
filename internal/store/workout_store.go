@@ -35,7 +35,7 @@ func NewDBWorkoutStore(DBConn *sql.DB) *DBWorkoutStore {
 type WorkoutStore interface {
 	CreateWorkout(*Workout) (*Workout, error)
 	GetWorkoutByID(id int64) (*Workout, error)
-	UpdateWorkout(*Workout) error
+	UpdateWorkoutByID(*Workout) error
 	DeleteWorkoutByID(id int64) error
 }
 
@@ -129,7 +129,7 @@ func (db *DBWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 	return workout, nil
 }
 
-func (db *DBWorkoutStore) UpdateWorkout(workout *Workout) error {
+func (db *DBWorkoutStore) UpdateWorkoutByID(workout *Workout) error {
 	tx, err := db.DBConn.Begin()
 	if err != nil {
 		return err
