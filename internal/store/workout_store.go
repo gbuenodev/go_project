@@ -88,7 +88,7 @@ func (db *DBWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 	`
 	err := db.DBConn.QueryRow(query, id).Scan(&workout.ID, &workout.Title, &workout.Description, &workout.DurationMinutes, &workout.CaloriesBurned)
 	if err == sql.ErrNoRows {
-		return nil, nil
+		return nil, err
 	}
 	if err != nil {
 		return nil, err
