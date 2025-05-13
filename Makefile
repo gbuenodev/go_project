@@ -1,10 +1,9 @@
-BINARY_NAME=workout_backend
+BINARY_NAME=workout_server
 BUILD_OUTPUT_DIR=./bin
 SRC=./
+ENV ?= prd
 
-.PHONY: up down restart logs cleanup run
-
-all: build
+.PHONY: build run clean test docker-up docker-down docker-restart docker-logs docker-clean
 
 build: clean
 	mkdir -p $(BUILD_OUTPUT_DIR)
@@ -13,19 +12,25 @@ build: clean
 run: build
 	$(BUILD_OUTPUT_DIR)/$(BINARY_NAME)
 
-clean:
+clean: docker-down
 	rm -rf $(BUILD_OUTPUT_DIR)
 
+test: 
+	$(MAKE) docker-up ENV=stg
+	go test -v ./...
+	$(MAKE) docker-down ENV=stg
+
 docker-up:
-	docker compose up --build -d
+	docker compose up --build -d ${ENV}_db
 
 docker-down:
-	docker compose down
+	docker compose stop ${ENV}_db
+	docker compose rm -f ${ENV}_db
 
 docker-restart: docker-down docker-up
 
 docker-logs:
-	docker compose logs -f
+	docker compose logs -f ${ENV}_db
 
 docker-clean:
 	docker system prune -f --volumes
