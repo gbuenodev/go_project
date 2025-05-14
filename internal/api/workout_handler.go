@@ -78,9 +78,8 @@ func (wh *WorkoutHandler) HandleUpdateWorkoutByID(w http.ResponseWriter, r *http
 		wh.logger.Printf("ERROR: GetWorkoutByID: %v", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
 		return
-	}
-	if existingWorkout == nil {
-		wh.logger.Printf("ERROR: GetWorkoutID: %v", err)
+	} else if existingWorkout == nil {
+		wh.logger.Printf("ERROR: GetWorkoutByID: %v", err)
 		utils.WriteJSON(w, http.StatusNotFound, utils.Envelope{"error": "workout not found"})
 		return
 	}
@@ -139,8 +138,7 @@ func (wh *WorkoutHandler) HandleDeleteWorkoutByID(w http.ResponseWriter, r *http
 		wh.logger.Printf("ERROR: DeleteWorkoutByID: %v", err)
 		utils.WriteJSON(w, http.StatusNotFound, utils.Envelope{"error": "workout not found"})
 		return
-	}
-	if err != nil {
+	} else if err != nil {
 		wh.logger.Printf("ERROR: DeleteWorkoutByID: %v", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
 		return

@@ -60,8 +60,7 @@ func (pg *PostgresWorkoutStore) GetWorkoutByID(id int64) (*Workout, error) {
 	err := pg.DBConn.QueryRow(query, id).Scan(&workout.ID, &workout.Title, &workout.Description, &workout.DurationMinutes, &workout.CaloriesBurned)
 	if err == sql.ErrNoRows {
 		return nil, err
-	}
-	if err != nil {
+	} else if err != nil {
 		return nil, err
 	}
 
@@ -121,8 +120,7 @@ func (pg *PostgresWorkoutStore) UpdateWorkoutByID(workout *Workout) error {
 	rowsAffected, err := results.RowsAffected()
 	if err != nil {
 		return err
-	}
-	if rowsAffected == 0 {
+	} else if rowsAffected == 0 {
 		return sql.ErrNoRows
 	}
 
@@ -170,11 +168,11 @@ func (pg *PostgresWorkoutStore) DeleteWorkoutByID(id int64) error {
 	if err != nil {
 		return err
 	}
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
-	}
-	if rowsAffected == 0 {
+	} else if rowsAffected == 0 {
 		return sql.ErrNoRows
 	}
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -35,4 +36,19 @@ func ReadIDParam(r *http.Request) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func IsValidUsername(username string) bool {
+	// Check if the username contains only alphanumeric characters and underscores
+	return regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString(username)
+}
+
+func IsValidEmail(email string) bool {
+	// Check if the email is in a valid format
+	return regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`).MatchString(email)
+}
+
+func IsValidPassword(password string) bool {
+	// Check if the password contains at least one uppercase letter, one lowercase letter, one number, and one special character
+	return regexp.MustCompile(`^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$`).MatchString(password)
 }
