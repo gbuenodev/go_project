@@ -45,10 +45,18 @@ func IsValidUsername(username string) bool {
 
 func IsValidEmail(email string) bool {
 	// Check if the email is in a valid format
-	return regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`).MatchString(email)
+	reg := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	return reg.MatchString(email)
 }
 
 func IsValidPassword(password string) bool {
-	// Check if the password contains at least one uppercase letter, one lowercase letter, one number, and one special character
-	return regexp.MustCompile(`^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$`).MatchString(password)
+	// Check if the password contains at least one uppercase letter, one lowercase letter, one number, one special character, and is at least 8 characters long
+	if len(password) < 8 {
+		return false
+	}
+	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
+	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
+	hasNumber := regexp.MustCompile(`\d`).MatchString(password)
+	hasSpecial := regexp.MustCompile(`[@$!%*?&]`).MatchString(password)
+	return hasUpper && hasLower && hasNumber && hasSpecial
 }

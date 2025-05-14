@@ -12,7 +12,7 @@ build: clean
 run: build
 	$(BUILD_OUTPUT_DIR)/$(BINARY_NAME)
 
-clean: docker-down
+clean:
 	rm -rf $(BUILD_OUTPUT_DIR)
 
 test: 
