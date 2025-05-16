@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS workouts (
   calories_burned INTEGER,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-)
+);
 -- +goose StatementEnd
 
 -- +goose Down

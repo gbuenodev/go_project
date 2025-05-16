@@ -3,13 +3,13 @@ BUILD_OUTPUT_DIR=./bin
 SRC=./
 ENV ?= prd
 
-.PHONY: build run clean test docker-up docker-down docker-restart docker-logs docker-clean
+.PHONY: build run clean test docker-up docker-down docker-restart docker-logs docker-clean stop
 
 build: clean
 	mkdir -p $(BUILD_OUTPUT_DIR)
 	go build -o $(BUILD_OUTPUT_DIR)/$(BINARY_NAME) $(SRC)
 
-run: build
+run: docker-up build
 	$(BUILD_OUTPUT_DIR)/$(BINARY_NAME)
 
 clean:
@@ -34,3 +34,5 @@ docker-logs:
 
 docker-clean:
 	docker system prune -f --volumes
+
+stop: docker-down clean

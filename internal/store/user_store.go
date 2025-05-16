@@ -39,7 +39,7 @@ func (p *password) Set(plainText string) error {
 	return nil
 }
 
-func (p *password) Mathces(plainText string) (bool, error) {
+func (p *password) Matches(plainText string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword(p.hash, []byte(plainText))
 	if err != nil {
 		switch {
