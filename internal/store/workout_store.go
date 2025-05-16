@@ -2,6 +2,7 @@ package store
 
 type Workout struct {
 	ID              int            `json:"id"`
+	UserID          int64          `json:"user_id"`
 	Title           string         `json:"title"`
 	Description     string         `json:"description"`
 	DurationMinutes int            `json:"duration_minutes"`
@@ -25,4 +26,5 @@ type WorkoutStore interface {
 	GetWorkoutByID(id int64) (*Workout, error)
 	UpdateWorkoutByID(*Workout) error
 	DeleteWorkoutByID(id int64) error
+	GetWorkoutOwner(id int64) (int64, error)
 }
