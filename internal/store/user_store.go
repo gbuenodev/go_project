@@ -21,6 +21,13 @@ type UserStore interface {
 	CreateUser(user *User) error
 	GetUserByUsername(username string) (*User, error)
 	UpdateUser(user *User) error
+	GetUserToken(scope, tokenPlainText string) (*User, error)
+}
+
+var AnonymousUser = &User{}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
 }
 
 type password struct {
