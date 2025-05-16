@@ -179,8 +179,8 @@ func (pg *PostgresWorkoutStore) DeleteWorkoutByID(id int64) error {
 	return nil
 }
 
-func (pg *PostgresWorkoutStore) GetWorkoutOwner(id int64) (int64, error) {
-	var userID int64
+func (pg *PostgresWorkoutStore) GetWorkoutOwner(id int64) (int, error) {
+	var userID int
 
 	query := `
 	SELECT user_id
