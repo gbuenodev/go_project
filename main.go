@@ -12,17 +12,24 @@ import (
 
 func main() {
 	var port int
+	var logLevel string
+
 	flag.IntVar(&port, "port", 8080, "GO backend server port")
+	flag.StringVar(&logLevel, "level", "info", "Log Level for the app")
 	flag.Parse()
 
-	app, err := app.NewApp()
+	app, err := app.NewApp(logLevel)
 	if err != nil {
 		panic(err)
 	}
 
 	defer app.DBConn.Close()
 
-	app.Logger.Printf("App is running on port %d\n", port)
+	fmt.Printf(`
+App is running on port: %d
+Log level: %s
+
+`, port, logLevel)
 
 	r := routes.Routes(app)
 
@@ -36,6 +43,6 @@ func main() {
 
 	err = server.ListenAndServe()
 	if err != nil {
-		app.Logger.Fatal(err)
+		panic(err)
 	}
 }

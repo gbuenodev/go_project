@@ -2,6 +2,8 @@ BINARY_NAME=workout_server
 BUILD_OUTPUT_DIR=./bin
 SRC=./
 ENV ?= prd
+LEVEL ?= INFO
+PORT ?= 8080
 
 .PHONY: build run clean test docker-up docker-down docker-restart docker-logs docker-clean stop
 
@@ -10,7 +12,7 @@ build: clean
 	go build -o $(BUILD_OUTPUT_DIR)/$(BINARY_NAME) $(SRC)
 
 run: docker-up build
-	$(BUILD_OUTPUT_DIR)/$(BINARY_NAME)
+	$(BUILD_OUTPUT_DIR)/$(BINARY_NAME) --level=$(LEVEL) --port=$(PORT)
 
 clean:
 	rm -rf $(BUILD_OUTPUT_DIR)

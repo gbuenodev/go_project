@@ -2,11 +2,11 @@ package app
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/gbuenodev/goProject/internal/api"
+	"github.com/gbuenodev/goProject/internal/errors"
 	"github.com/gbuenodev/goProject/internal/middleware"
 	"github.com/gbuenodev/goProject/internal/store"
 	"github.com/gbuenodev/goProject/internal/utils"
@@ -14,7 +14,7 @@ import (
 )
 
 type App struct {
-	Logger         *log.Logger
+	Logger         *slog.Logger
 	WorkoutHandler *api.WorkoutHandler
 	UserHandler    *api.UserHandler
 	TokenHandler   *api.TokenHandler
@@ -22,7 +22,7 @@ type App struct {
 	DBConn         *sql.DB
 }
 
-func NewApp() (*App, error) {
+func NewApp(logLevel string) (*App, error) {
 	dbConfig := store.DBConfig{
 		Provider: "Postgres",
 		Driver:   "pgx",
@@ -44,7 +44,8 @@ func NewApp() (*App, error) {
 		panic(err)
 	}
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	loggerOpts := errors.SetLoggerLevel(logLevel)
+	logger := errors.SetupDefaultLogger(loggerOpts)
 
 	workoutStore := store.NewPostgresWorkoutStore(DBConn)
 	userStore := store.NewPostgresUserStore(DBConn)

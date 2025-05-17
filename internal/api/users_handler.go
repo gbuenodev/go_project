@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/gbuenodev/goProject/internal/store"
@@ -20,10 +20,10 @@ type registerUserRequest struct {
 
 type UserHandler struct {
 	userStore store.UserStore
-	logger    *log.Logger
+	logger    *slog.Logger
 }
 
-func NewUserHandler(userStore store.UserStore, logger *log.Logger) *UserHandler {
+func NewUserHandler(userStore store.UserStore, logger *slog.Logger) *UserHandler {
 	return &UserHandler{
 		userStore: userStore,
 		logger:    logger,
@@ -41,7 +41,6 @@ func (uh *UserHandler) validateRegisterUserRequest(r *registerUserRequest) error
 	// Check if username already exists
 	existingUser, err := uh.userStore.GetUserByUsername(r.Username)
 	if err != nil && err != sql.ErrNoRows {
-		uh.logger.Printf("Error checking username existence: %v", err)
 		return errors.New("internal server error")
 	}
 	if existingUser != nil {
@@ -74,14 +73,14 @@ func (uh *UserHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Request
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		uh.logger.Printf("ERROR: decoding register request: %v", err)
+		uh.logger.Error("Decoding register request", "err", err)
 		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid request payload"})
 		return
 	}
 
 	err = uh.validateRegisterUserRequest(&req)
 	if err != nil {
-		uh.logger.Printf("ERROR: validating register request: %v", err)
+		uh.logger.Error("Validating register request", "err", err)
 		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": err.Error()})
 		return
 	}
@@ -98,14 +97,14 @@ func (uh *UserHandler) HandleRegisterUser(w http.ResponseWriter, r *http.Request
 	// Hash the password
 	err = user.PasswordHash.Set(req.Password)
 	if err != nil {
-		uh.logger.Printf("ERROR: hashing password: %v", err)
+		uh.logger.Error("Hashing password:", "err", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
 		return
 	}
 
 	err = uh.userStore.CreateUser(user)
 	if err != nil {
-		uh.logger.Printf("ERROR: creating user: %v", err)
+		uh.logger.Error("Creating user:", "err", err)
 		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "internal server error"})
 		return
 	}
