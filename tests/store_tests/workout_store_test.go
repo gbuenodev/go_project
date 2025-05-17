@@ -32,7 +32,7 @@ func setupTestDB(t *testing.T) *sql.DB {
 		t.Fatalf("Failed to run migrations: %v", err)
 	}
 
-	_, err = DBConn.Exec("TRUNCATE TABLE workouts, workout_entries RESTART IDENTITY CASCADE")
+	_, err = DBConn.Exec("TRUNCATE TABLE users, workouts, workout_entries RESTART IDENTITY CASCADE")
 	if err != nil {
 		t.Fatalf("Failed to truncate tables: %v", err)
 	}
@@ -44,6 +44,18 @@ func TestCreateWorkout(t *testing.T) {
 	DBConn := setupTestDB(t)
 
 	workoutStore := store.NewPostgresWorkoutStore(DBConn)
+	userStore := store.NewPostgresUserStore(DBConn)
+
+	testUser := &store.User{
+		Username: "Test_User",
+		Email:    "test@email.com",
+	}
+
+	err := testUser.PasswordHash.Set("Sup3rSecr3tPass#!")
+	require.NoError(t, err)
+
+	err = userStore.CreateUser(testUser)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
@@ -53,6 +65,7 @@ func TestCreateWorkout(t *testing.T) {
 		{
 			name: "Valid workout",
 			workout: &store.Workout{
+				UserID:          testUser.ID,
 				Title:           "Push Day",
 				Description:     "A workout focused on push exercises.",
 				DurationMinutes: 60,
@@ -73,6 +86,7 @@ func TestCreateWorkout(t *testing.T) {
 		{
 			name: "Invalid entries",
 			workout: &store.Workout{
+				UserID:          testUser.ID,
 				Title:           "Leg Day",
 				Description:     "A workout focused on leg exercises.",
 				DurationMinutes: 45,
