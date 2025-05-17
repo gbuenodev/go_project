@@ -50,14 +50,21 @@ All routes below are protected by:
 
 ```
 .
+├── main.go # App entry point
+├── Makefile # Build & run automation
+├── go.mod / go.sum # Go dependencies
+├── docker-compose # Docker dependencies
 ├── internal/
-│   └── app/                 # Application struct and dependencies
-│   └── handlers/            # Route handler logic
-│   └── middleware/          # Middleware for auth/user context
-│   └── routes/              # Route definitions
-├── main.go                  # App entry point
-├── Makefile                 # Build & run automation
-├── go.mod / go.sum          # Go dependencies
+│ ├── api/ # API request/response models
+│ ├── app/ # App setup, logger, DB, config
+│ ├── errors/ # Custom error types and handling
+│ ├── middleware/ # Auth and request middleware
+│ ├── routes/ # Route definitions using Chi
+│ ├── store/ # Database access and repository logic
+│ ├── tokens/ # Token generation and validation
+│ └── utils/ # Helper utilities
+├── migrations/ # SQL migration files
+└── tests/ # Test files
 ```
 
 ---
