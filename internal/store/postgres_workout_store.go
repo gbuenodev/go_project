@@ -184,7 +184,7 @@ func (pg *PostgresWorkoutStore) GetWorkoutOwner(id int64) (int, error) {
 
 	query := `
 	SELECT user_id
-	FROM worktouts
+	FROM workouts
 	WHERE id = $1
 	`
 
